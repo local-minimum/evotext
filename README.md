@@ -18,11 +18,11 @@ Numpy
 
 From command-line you simlpy type:
 
-  ./evotext.py
+  `./evotext.py`
 
 Or if you want to be fancy
 
-  ./evotext.py WORD 200 50
+  `./evotext.py WORD 200 50`
   
 Where the first number is the number of characters you want in each genome and second number is the population size
 
