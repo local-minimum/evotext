@@ -161,7 +161,7 @@ def _display(population, encoding, evo_word, generation=None, max_width=80, pad_
 
 
 def simulate(selection_word, characters=string.ascii_uppercase, generations=-1,
-             population_size=1000, text_length=800, mutation_size=5, mutation_frequency=0.05, fps=60, fecundency=10):
+             population_size=1000, text_length=800, mutation_size=5, mutation_frequency=0.02, fps=60, fecundency=10):
 
     def eternal_generator():
         gen = 0
