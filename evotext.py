@@ -35,7 +35,7 @@ def _denovo(n=256, l=26):
     return np.random.randint(0, l, n)
 
 
-def _relative_fitness(population_restrided, encoded_selection_word):
+def _relative_fitness(population_restrided, encoded_selection_word, base=10):
     """Calculates the relative fitness of all genomes
 
     Absolute fitness is calculated as the number of correctly placed
@@ -49,7 +49,7 @@ def _relative_fitness(population_restrided, encoded_selection_word):
     :param encoded_selection_word: The word as int array
     :return: fittness array
     """
-    occurancies = np.power(np.sum(population_restrided == encoded_selection_word, axis=-1), 2.0).sum(axis=-1)
+    occurancies = np.power(base, np.sum(population_restrided == encoded_selection_word, axis=-1)).sum(axis=-1)
 
     if occurancies.max() == 0:
 
