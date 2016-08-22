@@ -164,7 +164,7 @@ def _display(population, encoding, evo_word, generation=None, max_width=80,
     pos = 0
     while pos < characters:
 
-        word = np.choose(modes[pos: pos + line_width], encoding)
+        word = np.take(encoding, modes[pos: pos + line_width])
         for id_c, c in enumerate(word):
             if c in evo_word:
                 screen.addstr(line, pad_left + id_c, c, curses.color_pair(2))
