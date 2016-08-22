@@ -176,7 +176,7 @@ def _display(population, encoding, evo_word, generation=None, max_width=80,
 
 
 def simulate(selection_word="DEMO", characters=string.ascii_uppercase, generations=-1,
-             population_size=1000, text_length=800, mutation_size=5, mutation_frequency=0.02,
+             population_size=1000, text_length=800, mutation_size=3, mutation_frequency=0.02,
              fps=12, fecundency=10, fitness_base=10):
     """The simluation function
 
@@ -271,8 +271,9 @@ if __name__ == "__main__":
 
     if len(sys.argv) > 1:
         text = sys.argv[1].upper()
-        if " " in text:
-            characters=string.ascii_uppercase + " "
+
+        characters = sorted("".join(set(string.ascii_uppercase + text)))
+
         simulate(text, text_length=text_length, population_size=pop_size, characters=characters)
     else:
         simulate("DEMO", text_length=text_length, population_size=pop_size)
