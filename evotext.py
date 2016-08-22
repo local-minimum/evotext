@@ -55,7 +55,8 @@ def _relative_fitness(population_restrided, encoded_selection_word, base=10):
 
         return np.zeros_like(occurancies, dtype=np.float)
     else:
-        return occurancies / occurancies.max()
+
+        return (occurancies - occurancies.min()) / (occurancies.max() - occurancies.min())
 
 
 def _select(population, relative_fitness, n_characters, fecundency=10):
@@ -161,7 +162,8 @@ def _display(population, encoding, evo_word, generation=None, max_width=80, pad_
 
 
 def simulate(selection_word, characters=string.ascii_uppercase, generations=-1,
-             population_size=1000, text_length=800, mutation_size=5, mutation_frequency=0.02, fps=60, fecundency=10):
+             population_size=1000, text_length=800, mutation_size=5, mutation_frequency=0.02,
+             fps=60, fecundency=10, fitness_base=10):
 
     def eternal_generator():
         gen = 0
@@ -171,7 +173,7 @@ def simulate(selection_word, characters=string.ascii_uppercase, generations=-1,
 
     n_characters = len(characters)
 
-    encoded_selection_word = np.array([string.ascii_uppercase.index(c) for c in selection_word])
+    encoded_selection_word = np.array([characters.index(c) for c in selection_word])
 
     population = np.array([_denovo(text_length, n_characters) for _ in range(population_size)])
     population_restrided = np.lib.stride_tricks.as_strided(
@@ -192,7 +194,7 @@ def simulate(selection_word, characters=string.ascii_uppercase, generations=-1,
         t = time.clock()
 
         _mutate(population, mutation_size, mutation_frequency, n_characters)
-        relative_fitness = _relative_fitness(population_restrided, encoded_selection_word)
+        relative_fitness = _relative_fitness(population_restrided, encoded_selection_word, base=fitness_base)
         _select(population, relative_fitness, n_characters, fecundency=fecundency)
 
         screen = _display(population, characters, selection_word, screen=screen, generation=generation)
@@ -217,7 +219,15 @@ if __name__ == "__main__":
     else:
         text_length = 400
 
+    if len(sys.argv) > 3:
+        fitness_base = int(sys.argv[3])
+    else:
+        fitness_base = 10
+
     if len(sys.argv) > 1:
-        simulate(sys.argv[1].upper(), text_length=text_length, population_size=pop_size)
+        text = sys.argv[1].upper()
+        if " " in text:
+            characters=string.ascii_uppercase + " "
+        simulate(text, text_length=text_length, population_size=pop_size, characters=characters)
     else:
         simulate("DEMO", text_length=text_length, population_size=pop_size)
