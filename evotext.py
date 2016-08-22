@@ -113,16 +113,16 @@ def _mutate(population, mutation_size, mutation_frequency, n_characters):
 def _display(population, encoding, evo_word, generation=None, max_width=80, pad_top=2, pad_left=1, aspect=2, screen=None):
     """ Displays current state on screen
 
-    :param population:
-    :param encoding:
-    :param evo_word:
-    :param generation:
-    :param max_width:
-    :param pad_top:
-    :param pad_left:
-    :param aspect:
-    :param screen:
-    :return:
+    :param population: The population at its current state
+    :param encoding: The characters allowed in the genome as a string
+    :param evo_word: The word do select for
+    :param generation: Optional. Number of generations to simulate default is infinite
+    :param max_width: Optional. Maximum line width
+    :param pad_top: Optional. Number of empty characters at top
+    :param pad_left: Optional. Number of empty characters on the left
+    :param aspect: Optional. The width to height ratio
+    :param screen: Optional. A curses screen to use
+    :return: The curses screen
     """
     modes, freqs = zip(*(Counter(v).most_common(1)[0] for v in population.T))
     characters = len(modes)
