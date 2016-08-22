@@ -42,8 +42,14 @@ def _relative_fitness(population_restrided, encoded_selection_word, base=10):
     letters to the second power for all offsets in each genome.
     Then these values are summed up for the entire genome.
 
-    Relative fitness is the abolute divided by the maximum absolute
-    fitness.
+
+    Relative fitness is the individual absolute divided minus the
+    lowest absolute fitness of the population divided by the size of
+    the absolute fitness span.
+
+    In math:
+
+    (fitness - min(fitness)) / (max(fitness) - min(fitness))
 
     :param population_restrided: A wordlength-restrided population
     :param encoded_selection_word: The word as int array
@@ -51,12 +57,18 @@ def _relative_fitness(population_restrided, encoded_selection_word, base=10):
     """
     occurancies = np.power(base, np.sum(population_restrided == encoded_selection_word, axis=-1)).sum(axis=-1)
 
+    fitness_range = occurancies.max() - occurancies.min()
     if occurancies.max() == 0:
 
         return np.zeros_like(occurancies, dtype=np.float)
+
+    elif fitness_range == 0:
+
+        return np.ones_like(occurancies, dtype=np.float)
+
     else:
 
-        return (occurancies - occurancies.min()) / (occurancies.max() - occurancies.min())
+        return (occurancies - occurancies.min()) / fitness_range
 
 
 def _select(population, relative_fitness, n_characters, fecundency=10):
@@ -90,6 +102,7 @@ def _select(population, relative_fitness, n_characters, fecundency=10):
             population[fecundency_order[free_positions[free_pos]]] = population[parent]
             free_pos += 1
 
+    # TODO: This is not really biologically pleasing creating de novo competitors
     while free_pos < n_free:
         population[fecundency_order[free_positions[free_pos]]] = _denovo(population.shape[1], n_characters)
         free_pos += 1
@@ -110,7 +123,8 @@ def _mutate(population, mutation_size, mutation_frequency, n_characters):
     population[mutators] = mutations
 
 
-def _display(population, encoding, evo_word, generation=None, max_width=80, pad_top=2, pad_left=1, aspect=2, screen=None):
+def _display(population, encoding, evo_word, generation=None, max_width=80,
+             pad_top=2, pad_left=1, aspect=2, screen=None):
     """ Displays current state on screen
 
     :param population: The population at its current state
@@ -163,7 +177,7 @@ def _display(population, encoding, evo_word, generation=None, max_width=80, pad_
 
 def simulate(selection_word="DEMO", characters=string.ascii_uppercase, generations=-1,
              population_size=1000, text_length=800, mutation_size=5, mutation_frequency=0.02,
-             fps=60, fecundency=10, fitness_base=10):
+             fps=12, fecundency=10, fitness_base=10):
     """The simluation function
 
     :param selection_word:
