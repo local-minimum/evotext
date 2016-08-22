@@ -161,11 +161,42 @@ def _display(population, encoding, evo_word, generation=None, max_width=80, pad_
     return screen
 
 
-def simulate(selection_word, characters=string.ascii_uppercase, generations=-1,
+def simulate(selection_word="DEMO", characters=string.ascii_uppercase, generations=-1,
              population_size=1000, text_length=800, mutation_size=5, mutation_frequency=0.02,
              fps=60, fecundency=10, fitness_base=10):
+    """The simluation function
+
+    :param selection_word:
+        Optional. The word to select for
+    :param characters:
+        Optional. The characters allowed in the genomes
+    :param generations:
+        Optional. The number of generations
+    :param population_size:
+        Optional. Number of genomes.
+    :param text_length:
+        Optional. Length of each genome.
+    :param mutation_size:
+        Optional. Mutations occurs as SNPs and there's a
+        gaussian probability function centered around the current
+        character for what the new character state will be.
+        Mutation width decides the width of the gaussian in terms
+        of sigmas.
+    :param mutation_frequency:
+        Optional. Frequency of mutations
+    :param fps:
+        Optional. Simulation speed, max frames per seconds.
+    :param fecundency:
+        Optional. The maximum number of offsprings one genome
+        can have.
+    :param fitness_base:
+        Optional. The higher value the more more complete phrases
+        are promoted over single occurencies of characters in the
+        phrase. Useful range is 1 - 10.
+    """
 
     def eternal_generator():
+
         gen = 0
         while True:
             yield gen
