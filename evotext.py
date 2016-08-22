@@ -258,26 +258,72 @@ def simulate(selection_word="DEMO", characters=string.ascii_uppercase, generatio
 
 if __name__ == "__main__":
 
-    if len(sys.argv) > 3:
-        pop_size = int(sys.argv[3])
-    else:
-        pop_size = 500
+    parser = ArgumentParser(
+        prog="evoTEXT",
+        description="An evolutionary simulation of text genomes for fun and beauty",
+    )
 
-    if len(sys.argv) > 2:
-        text_length = int(sys.argv[2])
-    else:
-        text_length = 400
+    parser.add_argument(
+        "phrase",
+        nargs='?',
+        default="DEMO",
+        help='The word of phrase to be selected for'
+    )
 
-    if len(sys.argv) > 3:
-        fitness_base = int(sys.argv[3])
-    else:
-        fitness_base = 10
+    simulation_settings = parser.add_argument_group("Simulation Settings")
 
-    if len(sys.argv) > 1:
-        text = sys.argv[1].upper()
+    simulation_settings.add_argument(
+        "-p", "--population",
+        default=500, dest="population", type=int,
+        help="The size of the population / number of genomes"
+    )
 
+    simulation_settings.add_argument(
+        "-g", "--genome-size",
+        default=200, dest="genome_size", type=int,
+        help="Length of the genomes"
+    )
+
+    display_settings = parser.add_argument_group("Display Settings")
+
+    display_settings.add_argument(
+        "--fps",
+        default=60.0, dest='fps', type=float,
+        help="Maximum frame rate (and simulation / generation speed)"
+    )
+
+    other_settings = parser.add_argument_group("Other Settings")
+
+    other_settings.add_argument(
+        "-c", "--characters",
+        default="upper", dest='characters', type=str,
+        help="Which characters should be included. Any of [upper, lower, both]."
+    )
+
+    args = parser.parse_args()
+
+    text = ""
+    characters = ""
+    chars = args.characters.lower()
+    if 'upper'.startswith(chars):
+        text = args.phrase.upper()
         characters = sorted("".join(set(string.ascii_uppercase + text)))
-
-        simulate(text, text_length=text_length, population_size=pop_size, characters=characters)
+    elif 'lower'.startswith(chars):
+        text = args.phrase.lower()
+        characters = sorted("".join(set(string.ascii_lowercase + text)))
+    elif 'both'.startswith(chars):
+        text = args.phrase
+        characters = sorted("".join(set(string.ascii_letters + text)))
     else:
-        simulate("DEMO", text_length=text_length, population_size=pop_size)
+        parser.error(
+            "Character setting '{0}' not recognized. Please refer to the help".format(
+                args.characters))
+        sys.exit(-1)
+
+    simulate(
+        text,
+        text_length=args.genome_size,
+        population_size=args.population,
+        characters=characters,
+        fps=args.fps
+    )
