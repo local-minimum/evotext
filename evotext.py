@@ -22,12 +22,16 @@ import string
 from collections import Counter
 import time
 import sys
+from argparse import ArgumentParser
+import traceback
 
-
-def _exit(*args, **kwargs):
+def _exit(ex_class, ex_instance, trace):
     """Hook to ensure terminal looks alright after any exception"""
     curses.endwin()
-    sys.exit(-1)
+    if ex_class is KeyboardInterrupt:
+        sys.exit(0)
+    else:
+        traceback.print_tb(trace)
 
 
 def _denovo(n=256, l=26):
